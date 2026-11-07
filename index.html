@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Banco de Preguntas Teóricas Aleatorias - Procesos Industriales">
+    <title>Quiz Teórico Aleatorio: Procesos Industriales | SEC 603</title>
+    <link rel="icon" href="assets/images/logo.png" type="image/png">
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- MathJax Configuration -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #0066cc;
+            --secondary-color: #ff6600;
+            --dark-bg: #1a1a2e;
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --accent-green: #00cc66;
+            --accent-purple: #9933ff;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+        .main-header {
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid var(--secondary-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .navbar-brand img { filter: drop-shadow(0 0 10px var(--secondary-color)); }
+        .navbar-brand span {
+            font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1.4rem;
+            background: linear-gradient(45deg, var(--secondary-color), #ff9933);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .lab-title {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(45deg, var(--secondary-color), #ff9933);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-align: center; margin: 2rem 0 0.5rem 0; font-size: 1.8rem; font-weight: 900;
+        }
+        .progress-bar-custom {
+            height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px;
+            margin: 1.5rem 0 2.5rem 0; overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; background: linear-gradient(90deg, var(--secondary-color), #ff9933);
+            width: 10%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .step-container { display: none; animation: fadeIn 0.6s ease-out; }
+        .step-container.active { display: block; }
+        .info-card {
+            background: var(--card-bg); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px;
+            padding: 1.5rem; margin-bottom: 1.5rem; border-left: 4px solid var(--primary-color);
+        }
+        .info-card h4 { font-family: 'Orbitron', sans-serif; color: var(--secondary-color); margin-bottom: 1rem; font-size: 1.2rem; }
+        .engineering-note {
+            background: rgba(153, 51, 255, 0.15); border: 1px solid rgba(153, 51, 255, 0.3);
+            border-radius: 8px; padding: 1rem; margin-top: 1rem; font-size: 0.95rem;
+        }
+        .engineering-note i { color: var(--accent-purple); }
+        .quiz-option {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; cursor: pointer;
+            transition: all 0.2s; display: flex; align-items: flex-start;
+        }
+        .quiz-option:hover { background: rgba(255, 102, 0, 0.1); border-color: var(--secondary-color); }
+        .quiz-option input[type="radio"] { margin-right: 1rem; margin-top: 4px; accent-color: var(--secondary-color); transform: scale(1.2); cursor: pointer; }
+        .quiz-option.selected { background: rgba(255, 102, 0, 0.2); border-color: var(--secondary-color); }
+        .btn-action {
+            background: linear-gradient(135deg, var(--secondary-color), #ff9933); border: none;
+            font-weight: 700; padding: 0.75rem 1.5rem; transition: all 0.3s; color: #fff; border-radius: 8px;
+        }
+        .btn-action:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(255, 102, 0, 0.4); color: #fff; }
+        .btn-action:disabled { background: #444; color: #888; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-back {
+            background: transparent; border: 1px solid rgba(255, 255, 255, 0.3); color: #ccc;
+            font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 8px; transition: all 0.3s;
+        }
+        .btn-back:hover { background: rgba(255, 255, 255, 0.1); color: #fff; border-color: #fff; }
+        .solution-box {
+            background: rgba(0, 204, 102, 0.08); border-left: 4px solid var(--accent-green);
+            padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; display: none;
+        }
+        .solution-box.show { display: block; animation: fadeIn 0.5s; }
+        .feedback-msg { margin-top: 1rem; padding: 1rem; border-radius: 8px; display: none; font-weight: 600; font-size: 0.95rem; }
+        .feedback-msg.success { background: rgba(0, 204, 102, 0.15); color: #00ff88; border: 1px solid var(--accent-green); }
+        .feedback-msg.error { background: rgba(204, 51, 0, 0.15); color: #ff6666; border: 1px solid #cc3300; }
+        footer { background: rgba(0, 0, 0, 0.9); border-top: 3px solid var(--secondary-color); margin-top: 4rem; padding: 2rem 0; }
+        .footer-logo { filter: drop-shadow(0 0 10px var(--secondary-color)); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 768px) {
+            .lab-title { font-size: 1.4rem; }
+            .info-card { padding: 1.2rem; }
+            .btn-action, .btn-back { width: 100%; margin-bottom: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <a class="navbar-brand" href="#" aria-label="Inicio">
+                <img src="assets/images/logo.png" alt="Logo" height="50" class="footer-logo" onerror="this.src='https://via.placeholder.com/50x50/ff6600/ffffff?text=TEORIA'">
+                <span>PROCESOS INDUSTRIALES - SEC 603</span>
+            </a>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <div class="container py-4">
+            <h1 class="lab-title"><i class="fas fa-brain me-3"></i>QUIZ TEÓRICO ALEATORIO</h1>
+            <p class="text-center text-white mb-2">10 preguntas seleccionadas al azar de un banco de 30 conceptos clave</p>
+
+            <div class="progress-bar-custom">
+                <div class="progress-fill" id="progressBar" style="width: 10%;"></div>
+            </div>
+
+            <div id="quiz-container">
+                <!-- Las preguntas se inyectarán aquí dinámicamente con JS -->
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    <img src="assets/images/logo.png" alt="Logo" height="50" class="footer-logo mb-2" onerror="this.src='https://via.placeholder.com/50x50/ff6600/ffffff?text=TEORIA'">
+                    <p class="text-white mb-0">
+                        Herramientas para el estudio de procesos industriales.<br>
+                        <small>Facultad de Ingeniería - Sección 603 (2026-2)</small>
+                    </p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="text-white mb-0">
+                        <i class="fas fa-university me-2"></i>Procesos Industriales<br>
+                        <small>Preparación Examen Escrito Nº 2</small>
+                    </p>
+                </div>
+            </div>
+            <hr class="my-3" style="border-color: var(--secondary-color); opacity: 0.3;">
+            <div class="text-center text-white">
+                <small>&copy; 2026 Procesos Industriales. Todos los derechos reservados.</small>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Banco de 30 preguntas teóricas
+        const questionPool = [
+            {
+                q: "¿Una Operación Unitaria (OU) implica un cambio en la estructura química de la materia prima?",
+                options: [
+                    { text: "Verdadero, siempre hay una reacción química involucrada.", correct: false },
+                    { text: "Falso, solo implica cambios físicos como cambio de estado, separación o transporte.", correct: true },
+                    { text: "Verdadero, pero únicamente en procesos de secado y evaporación.", correct: false }
+                ],
+                explanation: "Las Operaciones Unitarias (OU) son procesos físicos (ej. evaporación, filtración). Los Procesos Unitarios (PU) son los que implican reacciones químicas y cambio de estructura molecular."
+            },
+            {
+                q: "¿Cuál de los siguientes es un ejemplo claro de Proceso Unitario (cambio químico)?",
+                options: [
+                    { text: "La evaporación del agua de una solución de azúcar.", correct: false },
+                    { text: "La fermentación de la glucosa para producir etanol y CO₂.", correct: true },
+                    { text: "La filtración de sólidos suspendidos en un líquido.", correct: false }
+                ],
+                explanation: "La fermentación transforma la glucosa en nuevas sustancias (etanol y CO₂), cambiando su estructura química, lo que la define como un Proceso Unitario."
+            },
+            {
+                q: "¿Por qué no se puede hervir la leche evaporada a 100 °C a presión atmosférica?",
+                options: [
+                    { text: "Porque las proteínas (suero y caseína) se desnaturalizarían y ocurriría la reacción de Maillard, oscureciendo el producto.", correct: true },
+                    { text: "Porque el agua se evaporaría demasiado rápido y el equipo explotaría.", correct: false },
+                    { text: "Porque la lactosa se cristaliza instantáneamente a esa temperatura.", correct: false }
+                ],
+                explanation: "La leche es termolábil. A 100 °C, las proteínas se desnaturalizan y la reacción de Maillard genera color y sabor a 'cocido', arruinando el perfil organoléptico."
+            },
+            {
+                q: "¿Qué tipo de evaporador se utiliza en plantas peruanas para preservar el color blanco y valor nutricional de la leche evaporada?",
+                options: [
+                    { text: "Evaporador de múltiple efecto de película descendente (Falling Film).", correct: true },
+                    { text: "Evaporador de cacerola abierta a presión atmosférica.", correct: false },
+                    { text: "Cristalizador por enfriamiento repentino.", correct: false }
+                ],
+                explanation: "Los evaporadores de película descendente permiten evaporar el agua a temperaturas bajas (45 °C - 65 °C) y con mínimo tiempo de residencia, preservando el producto."
+            },
+            {
+                q: "En una curva de solubilidad, si se sigue evaporando solvente más allá de la curva de saturación, ¿qué ocurre?",
+                options: [
+                    { text: "La solución se mantiene en una sola fase líquida indefinidamente.", correct: false },
+                    { text: "El exceso de soluto ya no puede permanecer disuelto y comienza a cristalizar (zona sobresaturada).", correct: true },
+                    { text: "El soluto se volatiliza junto con el solvente.", correct: false }
+                ],
+                explanation: "La curva de saturación marca el límite. Más allá de ella, la solución entra en zona sobresaturada y el soluto excedente precipita o cristaliza."
+            },
+            {
+                q: "¿Por qué la leche se concentra primero en un evaporador de múltiple efecto antes de pasar a un secador por aspersión (spray drying)?",
+                options: [
+                    { text: "Para aumentar el contenido de agua y facilitar la atomización.", correct: false },
+                    { text: "Para ahorrar una cantidad masiva de energía y evitar que la proteína se queme en el secador.", correct: true },
+                    { text: "Porque los secadores por aspersión solo pueden manejar sólidos puros sin líquido.", correct: false }
+                ],
+                explanation: "Pasar de 87% a 50% de sólidos en un evaporador es energéticamente muy eficiente. El secador por aspersión solo se usa para la etapa final, evitando el desperdicio energético de evaporar toda el agua allí."
+            },
+            {
+                q: "El análisis Orsat de los gases de combustión se realiza y reporta normativamente en:",
+                options: [
+                    { text: "Base húmeda, incluyendo el vapor de agua para mayor precisión.", correct: false },
+                    { text: "Base seca, excluyendo el vapor de agua, ya que este se condensa en el aparato de medición.", correct: true },
+                    { text: "Base libre de nitrógeno, para aislar solo los contaminantes.", correct: false }
+                ],
+                explanation: "El análisis Orsat mide CO₂, O₂, CO y N₂ en base seca. El vapor de agua se condensa durante la medición, y su cantidad variable distorsionaría la lectura de los gases reales."
+            },
+            {
+                q: "¿Cuál es la principal razón técnica para utilizar aire en exceso en una combustión industrial?",
+                options: [
+                    { text: "Para aumentar el Poder Calorífico Superior (PCS) del combustible artificialmente.", correct: false },
+                    { text: "Para garantizar la combustión completa y evitar la formación de CO tóxico y hollín por mezcla imperfecta.", correct: true },
+                    { text: "Para que el nitrógeno actúe como catalizador de la oxidación.", correct: false }
+                ],
+                explanation: "El exceso de aire compensa las imperfecciones en la mezcla combustible-aire, asegurando que todo el carbono llegue a CO₂ y no se quede como CO o carbono sólido (hollín)."
+            },
+            {
+                q: "La entalpía es una función de estado. ¿Qué significa esto en el contexto de un balance de energía?",
+                options: [
+                    { text: "Que el cambio de entalpía (ΔH) solo depende del estado inicial y final, no de la trayectoria seguida.", correct: true },
+                    { text: "Que la entalpía siempre aumenta con la presión del sistema.", correct: false },
+                    { text: "Que la entalpía se conserva íntegramente sin pérdidas en ningún proceso real.", correct: false }
+                ],
+                explanation: "Ser función de estado nos permite inventar trayectorias hipotéticas (ej. enfriar a 25°C, reaccionar, y luego calentar) para usar tablas termodinámicas, sabiendo que el ΔH total será el mismo."
+            },
+            {
+                q: "El calor latente se define termodinámicamente como:",
+                options: [
+                    { text: "La energía que provoca un cambio de temperatura sin cambiar el estado físico.", correct: false },
+                    { text: "La energía transferida que provoca un cambio de estado físico a temperatura y presión constantes.", correct: true },
+                    { text: "La energía cinética de las moléculas de un gas ideal.", correct: false }
+                ],
+                explanation: "El calor latente (como la vaporización o fusión) ocurre a T y P constantes, rompiendo o formando enlaces intermoleculares sin cambiar la temperatura del sistema."
+            },
+            {
+                q: "Según la Ley Marco sobre Cambio Climático (Ley N° 30754) en Perú, ciertos sectores deben reportar sus emisiones de GEI a través de:",
+                options: [
+                    { text: "INFOCARBONO del MINAM.", correct: true },
+                    { text: "La SUNAT mediante el Impuesto a la Renta.", correct: false },
+                    { text: "El Ministerio de Energía y Minas exclusivamente.", correct: false }
+                ],
+                explanation: "El INFOCARBONO es el registro nacional donde los sectores regulados (energía, industria, minería) deben reportar sus inventarios de Gases de Efecto Invernadero."
+            },
+            {
+                q: "¿Qué es el Mecanismo de Ajuste Fronterizo de Carbono (CBAM) de la Unión Europea?",
+                options: [
+                    { text: "Un subsidio europeo para empresas que exportan productos ecológicos.", correct: false },
+                    { text: "Un arancel adicional a importaciones de sectores clave si no demuestran bajas emisiones de carbono.", correct: true },
+                    { text: "Una norma que prohíbe la importación de cualquier producto que haya usado gas natural.", correct: false }
+                ],
+                explanation: "El CBAM (Carbon Border Adjustment Mechanism) busca evitar la 'fuga de carbono', gravando las importaciones con alta huella de carbono para nivelar el juego con la industria europea."
+            },
+            {
+                q: "En el GHG Protocol, las emisiones por combustión directa de combustible en los hornos o calderas de la empresa se clasifican como:",
+                options: [
+                    { text: "Alcance 1 (Emisiones directas).", correct: true },
+                    { text: "Alcance 2 (Emisiones indirectas por energía comprada).", correct: false },
+                    { text: "Alcance 3 (Otras emisiones indirectas de la cadena de valor).", correct: false }
+                ],
+                explanation: "Alcance 1 cubre todas las emisiones directas de GEI de fuentes que son propiedad o están controladas por la empresa reportante (ej. combustión en caldera propia)."
+            },
+            {
+                q: "La norma ISO 50001 se enfoca específicamente en:",
+                options: [
+                    { text: "La cuantificación de la huella de carbono de productos específicos.", correct: false },
+                    { text: "Sistemas de Gestión de la Energía y la mejora continua del desempeño energético.", correct: true },
+                    { text: "La compensación de emisiones mediante reforestación.", correct: false }
+                ],
+                explanation: "ISO 50001 proporciona un marco para que las organizaciones establezcan sistemas para mejorar su desempeño energético, eficiencia, uso y consumo."
+            },
+            {
+                q: "Si en una combustión de metano se forma monóxido de carbono (CO) en lugar de CO₂, esto indica que la combustión fue:",
+                options: [
+                    { text: "Completa, pero con exceso de aire.", correct: false },
+                    { text: "Incompleta, generalmente por deficiencia de oxígeno o mala mezcla.", correct: true },
+                    { text: "Espontánea, sin necesidad de fuente de ignición.", correct: false }
+                ],
+                explanation: "La formación de CO o C (hollín) en lugar de CO₂ es la marca distintiva de una combustión incompleta, lo que representa una pérdida de energía y un riesgo toxicológico."
+            },
+            {
+                q: "La 'economía de vapor' en un evaporador de múltiple efecto se define como:",
+                options: [
+                    { text: "La relación entre los kg de agua total evaporada y los kg de vapor de caldera fresco consumido.", correct: true },
+                    { text: "El costo en soles de operar el evaporador por hora.", correct: false },
+                    { text: "La diferencia de temperatura entre el primer y el último efecto.", correct: false }
+                ],
+                explanation: "Una economía de vapor > 1 (ej. 1.2 o 2.5) indica que se evapora más de 1 kg de agua por cada kg de vapor fresco, gracias a la reutilización del vapor en efectos posteriores."
+            },
+            {
+                q: "La Elevación del Punto de Ebullición (EPE) en una solución se debe principalmente a:",
+                options: [
+                    { text: "La presencia de solutos no volátiles que reducen la presión de vapor del solvente.", correct: true },
+                    { text: "Al aumento de la presión atmosférica en la cima de los Andes.", correct: false },
+                    { text: "A la adición de vapor de caldera directamente al líquido.", correct: false }
+                ],
+                explanation: "La EPE (o elevación ebulloscópica) ocurre porque las moléculas de soluto interfieren con la evaporación del solvente, requiriendo mayor temperatura para que la presión de vapor iguale a la presión externa."
+            },
+            {
+                q: "La calcinación de CaCO₃ para producir CaO y CO₂ se clasifica como:",
+                options: [
+                    { text: "Operación Unitaria, porque solo cambia el estado físico del material.", correct: false },
+                    { text: "Proceso Unitario, porque hay un cambio en la estructura química y formación de nuevas sustancias.", correct: true },
+                    { text: "Proceso de separación mecánica.", correct: false }
+                ],
+                explanation: "La descomposición térmica (calcinación) rompe enlaces químicos, transformando el carbonato de calcio en óxido de calcio y dióxido de carbono, siendo una reacción química (PU)."
+            },
+            {
+                q: "En los cálculos de combustión, el aire seco se asume convencionalmente compuesto por:",
+                options: [
+                    { text: "50% O₂ y 50% N₂ en moles.", correct: false },
+                    { text: "21% O₂ y 79% N₂ en moles (o volumen).", correct: true },
+                    { text: "78% O₂ y 21% N₂ en moles.", correct: false }
+                ],
+                explanation: "Esta es la convención estándar en ingeniería: por cada mol de O₂, entran 79/21 = 3.76 moles de N₂, que actúa como diluyente inerte en la combustión."
+            },
+            {
+                q: "Al usar calores de combustión estándar (ΔHc) para calcular el calor de reacción mediante la Ley de Hess, la fórmula correcta es:",
+                options: [
+                    { text: "ΔH_rxn = (Σ n·ΔHc_productos) - (Σ n·ΔHc_reactivos)", correct: false },
+                    { text: "ΔH_rxn = (Σ n·ΔHc_reactivos) - (Σ n·ΔHc_productos)", correct: true },
+                    { text: "ΔH_rxn = (Σ n·ΔHc_reactivos) + (Σ n·ΔHc_productos)", correct: false }
+                ],
+                explanation: "A diferencia de los calores de formación (Productos - Reactivos), con calores de combustión la fórmula se invierte: Reactivos - Productos, porque la convención de ΔHc = 0 aplica a los productos de combustión (CO₂, H₂O)."
+            },
+            {
+                q: "Un producto termolábil es aquel que:",
+                options: [
+                    { text: "Mejora sus propiedades nutricionales al ser expuesto a altas temperaturas por largo tiempo.", correct: false },
+                    { text: "Sufre degradación, desnaturalización o volatilización de sus componentes al exponerse al calor.", correct: true },
+                    { text: "Requiere necesariamente cristalización para ser estabilizado.", correct: false }
+                ],
+                explanation: "La termolabilidad es la sensibilidad al calor. Vitaminas, enzimas, aromas y proteínas son termolábiles y se degradan si la temperatura o el tiempo de residencia son excesivos."
+            },
+            {
+                q: "Los Estándares de Calidad Ambiental (ECA) para emisiones en Perú establecen:",
+                options: [
+                    { text: "Límites máximos permisibles para SO₂, NOx y material particulado en fuentes fijas.", correct: true },
+                    { text: "Precios fijos para la venta de bonos de carbono en la bolsa.", correct: false },
+                    { text: "La obligación de usar únicamente energía solar en todas las fábricas.", correct: false }
+                ],
+                explanation: "Los ECA (como el D.S. 003-2017-MINAM) definen los niveles máximos de concentración de contaminantes en el cuerpo receptor (aire, agua) para proteger la salud y el ambiente."
+            },
+            {
+                q: "Una ventaja ambiental clave del uso de Gas Natural (GNV) frente a combustibles líquidos pesados (como el residual 6) es:",
+                options: [
+                    { text: "Su menor relación carbono/hidrógeno, lo que reduce las emisiones de CO₂ por unidad de energía generada.", correct: true },
+                    { text: "Que no produce absolutamente ninguna emisión de CO₂ al quemarse.", correct: false },
+                    { text: "Que elimina por completo la necesidad de exceso de aire en la combustión.", correct: false }
+                ],
+                explanation: "El metano (CH₄) tiene la relación C/H más baja de los hidrocarburos. Al quemarse, genera más energía por mol de CO₂ emitido en comparación con combustibles más pesados."
+            },
+            {
+                q: "Operar el segundo efecto de un evaporador al vacío permite principalmente:",
+                options: [
+                    { text: "Aumentar la temperatura de ebullición para esterilizar el producto.", correct: false },
+                    { text: "Reducir la temperatura de ebullición, protegiendo compuestos sensibles como la vitamina C.", correct: true },
+                    { text: "Aumentar la presión del vapor para mover turbinas eléctricas.", correct: false }
+                ],
+                explanation: "El vacío reduce la presión absoluta, lo que baja la temperatura de saturación (ebullición). Esto es crucial para productos alimenticios que se degradan a altas temperaturas."
+            },
+            {
+                q: "Si el aire de combustión tiene una humedad relativa muy alta (día muy húmedo), ¿cómo afecta esto al balance de energía?",
+                options: [
+                    { text: "Disminuye el O₂ requerido, ya que el vapor de agua aporta oxígeno libre.", correct: false },
+                    { text: "Aumenta los moles de H₂O en los productos, incrementando las pérdidas por calor latente y sensible en la chimenea.", correct: true },
+                    { text: "No tiene ningún efecto, el agua es totalmente inerte en el balance de energía.", correct: false }
+                ],
+                explanation: "El agua arrastrada por el aire húmedo debe ser calentada hasta la temperatura de los humos y, si estaba líquida, vaporizada, consumiendo energía útil que se pierde por la chimenea."
+            },
+            {
+                q: "La norma ISO 14067 se refiere específicamente a:",
+                options: [
+                    { text: "La cuantificación de la Huella de Carbono de Productos a lo largo de su ciclo de vida.", correct: true },
+                    { text: "Los requisitos para sistemas de gestión de la seguridad y salud en el trabajo.", correct: false },
+                    { text: "La auditoría financiera de proyectos de energía renovable.", correct: false }
+                ],
+                explanation: "ISO 14067 establece los principios y requisitos para la cuantificación y comunicación de la huella de carbono de un producto (PCF), desde la cuna hasta la tumba."
+            },
+            {
+                q: "La neutralización de NaOH con HCl para formar NaCl y H₂O es un ejemplo de:",
+                options: [
+                    { text: "Operación Unitaria de separación por membranas.", correct: false },
+                    { text: "Proceso Unitario, debido a la reacción química de formación de nuevas sustancias.", correct: true },
+                    { text: "Cambio de estado físico reversible.", correct: false }
+                ],
+                explanation: "Hay una ruptura y formación de enlaces químicos, transformando un ácido y una base en una sal y agua, lo que la define como un Proceso Unitario (químico)."
+            },
+            {
+                q: "La principal ventaja de los evaporadores de película descendente (falling film) es que:",
+                options: [
+                    { text: "Minimizan el tiempo de residencia del producto al calor, reduciendo la degradación térmica.", correct: true },
+                    { text: "Permiten operar a presiones mucho más altas que la atmosférica.", correct: false },
+                    { text: "No requieren vapor de caldera para funcionar.", correct: false }
+                ],
+                explanation: "El líquido fluye como una película delgada por gravedad dentro de los tubos, logrando una transferencia de calor muy rápida y un tiempo de contacto mínimo, ideal para productos termolábiles."
+            },
+            {
+                q: "¿Por qué es importante reportar las emisiones de combustión en 'base seca' según la normativa ambiental?",
+                options: [
+                    { text: "Porque la cantidad de vapor de agua en los gases varía con la humedad del aire, distorsionando la concentración real de contaminantes.", correct: true },
+                    { text: "Porque los analizadores de gases no pueden detectar el CO₂ si hay agua presente.", correct: false },
+                    { text: "Porque el agua reacciona con el SO₂ para formar ácido sulfúrico dentro del sensor.", correct: false }
+                ],
+                explanation: "Estandarizar en base seca elimina la variable de la humedad ambiental, permitiendo comparar de manera justa y consistente las concentraciones de contaminantes (ppm) entre diferentes días y plantas."
+            },
+            {
+                q: "Las multinacionales exigen a sus proveedores en Perú reportar su huella de carbono principalmente porque:",
+                options: [
+                    { text: "Las regulaciones globales y los consumidores finales demandan transparencia y reducción de emisiones en toda la cadena de valor (Alcance 3).", correct: true },
+                    { text: "El gobierno peruano les multa si no lo hacen.", correct: false },
+                    { text: "Para poder cobrar impuestos adicionales a sus propios empleados.", correct: false }
+                ],
+                explanation: "Bajo el GHG Protocol, las emisiones de la cadena de suministro de una empresa son su 'Alcance 3'. Las grandes corporaciones presionan a sus proveedores para reducir estas emisiones y cumplir sus propias metas de neutralidad."
+            }
+        ];
+
+        let currentQuestions = [];
+        let currentStep = 1;
+        let score = 0;
+
+        // Función para barajar array (Fisher-Yates)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Inicializar Quiz
+        function initQuiz() {
+            // Seleccionar 10 preguntas al azar
+            const shuffledPool = shuffleArray([...questionPool]);
+            currentQuestions = shuffledPool.slice(0, 10);
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+
+            currentQuestions.forEach((qData, index) => {
+                const stepNum = index + 1;
+                const isLast = stepNum === 10;
+                
+                // Barajar opciones para esta pregunta
+                const shuffledOptions = shuffleArray([...qData.options]);
+
+                let optionsHtml = '';
+                shuffledOptions.forEach((opt, optIndex) => {
+                    optionsHtml += `
+                        <label class="quiz-option" data-correct="${opt.correct}">
+                            <input type="radio" name="q${stepNum}" value="opt${optIndex}">
+                            <span>${opt.text}</span>
+                        </label>
+                    `;
+                });
+
+                const stepHtml = `
+                    <div class="step-container ${stepNum === 1 ? 'active' : ''}" id="step${stepNum}">
+                        <div class="info-card">
+                            <span class="badge bg-primary mb-2"><i class="fas fa-info-circle me-1"></i> Pregunta ${stepNum} de 10</span>
+                            <h4><i class="fas fa-question-circle me-2"></i>Concepto Teórico</h4>
+                            <p class="fs-5">${qData.q}</p>
+                        </div>
+                        <div class="info-card" style="border-left-color: var(--secondary-color);">
+                            <div class="mb-4">
+                                ${optionsHtml}
+                            </div>
+                            <div id="feedback${stepNum}" class="feedback-msg"></div>
+                            <div class="d-flex gap-3 mt-3 flex-wrap">
+                                ${stepNum > 1 ? `<button class="btn btn-back" onclick="prevStep(${stepNum - 1})"><i class="fas fa-arrow-left me-2"></i>Regresar</button>` : '<div></div>'}
+                                <button class="btn btn-action" id="checkBtn${stepNum}" onclick="checkStep(${stepNum})"><i class="fas fa-check-circle me-2"></i>Verificar</button>
+                                <button class="btn btn-action d-none" id="next${stepNum}" onclick="${isLast ? 'finishLab()' : `nextStep(${stepNum + 1})`}" style="background: linear-gradient(135deg, #00cc66, #009955);">
+                                    ${isLast ? 'Finalizar Estudio <i class="fas fa-flag-checkered ms-2"></i>' : 'Siguiente <i class="fas fa-arrow-right ms-2"></i>'}
+                                </button>
+                            </div>
+                        </div>
+                        <div class="solution-box" id="solution${stepNum}">
+                            <h5><i class="fas fa-lightbulb me-2 text-success"></i>Retroalimentación</h5>
+                            <p>${qData.explanation}</p>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', stepHtml);
+            });
+
+            // Añadir listeners para highlight visual
+            document.querySelectorAll('.quiz-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const name = this.querySelector('input').name;
+                    document.querySelectorAll(`input[name="${name}"]`).forEach(radio => {
+                        radio.parentElement.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    this.querySelector('input').checked = true;
+                });
+            });
+        }
+
+        function checkStep(stepNum) {
+            let feedbackEl = document.getElementById(`feedback${stepNum}`);
+            let checkBtn = document.getElementById(`checkBtn${stepNum}`);
+            let nextBtn = document.getElementById(`next${stepNum}`);
+            let solutionBox = document.getElementById(`solution${stepNum}`);
+
+            const selected = document.querySelector(`input[name="q${stepNum}"]:checked`);
+            let isCorrect = selected ? selected.closest('.quiz-option').dataset.correct === 'true' : false;
+
+            if (isCorrect) {
+                score++;
+                feedbackEl.className = 'feedback-msg success';
+                feedbackEl.innerHTML = '<i class="fas fa-check-circle me-2"></i>¡Correcto! Excelente dominio del concepto.';
+                feedbackEl.style.display = 'block';
+                solutionBox.classList.add('show');
+                nextBtn.classList.remove('d-none');
+                checkBtn.disabled = true;
+                checkBtn.innerHTML = '<i class="fas fa-check me-2"></i>Verificado';
+                if (window.MathJax) MathJax.typesetPromise([solutionBox]);
+            } else {
+                feedbackEl.className = 'feedback-msg error';
+                feedbackEl.innerHTML = '<i class="fas fa-times-circle me-2"></i>Incorrecto. Revisa la retroalimentación que aparece abajo para aprender el concepto.';
+                feedbackEl.style.display = 'block';
+                solutionBox.classList.add('show'); // Mostrar explicación aunque sea error para que aprenda
+                nextBtn.classList.remove('d-none'); // Permitir avanzar aunque se equivoque, para no bloquear
+                checkBtn.disabled = true;
+                checkBtn.innerHTML = '<i class="fas fa-times me-2"></i>Revisado';
+                if (window.MathJax) MathJax.typesetPromise([solutionBox]);
+            }
+        }
+
+        function nextStep(nextStepNum) {
+            document.querySelectorAll('.step-container').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step${nextStepNum}`).classList.add('active');
+            const progress = (nextStepNum / 10) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function prevStep(prevStepNum) {
+            document.querySelectorAll('.step-container').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step${prevStepNum}`).classList.add('active');
+            const progress = (prevStepNum / 10) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function finishLab() {
+            const percentage = Math.round((score / 10) * 100);
+            let message = "";
+            let icon = "";
+            if (percentage >= 90) { message = "¡Excelente! Dominas los conceptos teóricos a la perfección."; icon = "fa-trophy"; }
+            else if (percentage >= 70) { message = "¡Muy bien! Tienes una base sólida, repasa los conceptos fallados."; icon = "fa-thumbs-up"; }
+            else { message = "Necesitas repasar la teoría. Revisa las explicaciones de cada pregunta."; icon = "fa-book-open"; }
+
+            const modalHtml = `
+                <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content" style="background: #1a1a2e; border: 1px solid var(--accent-green); color: #fff;">
+                            <div class="modal-header border-bottom-0">
+                                <h5 class="modal-title" style="color: var(--accent-green);"><i class="fas ${icon} me-2"></i>¡Evaluación Completada!</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <h2 class="display-4 fw-bold" style="color: var(--secondary-color);">${score}/10</h2>
+                                <p class="fs-5">${message}</p>
+                                <p class="text-white-50">Recuerda que cada vez que recargues la página, obtendrás 10 preguntas nuevas y aleatorias del banco de 30.</p>
+                            </div>
+                            <div class="modal-footer border-top-0 justify-content-center">
+                                <button type="button" class="btn btn-action" data-bs-dismiss="modal" onclick="location.reload()">
+                                    <i class="fas fa-redo me-2"></i>Intentar con nuevas preguntas
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modal = new bootstrap.Modal(document.getElementById('successModal'));
+            modal.show();
+        }
+
+        // Iniciar al cargar
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>
